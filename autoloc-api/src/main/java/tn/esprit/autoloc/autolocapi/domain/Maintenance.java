@@ -11,9 +11,15 @@ public class Maintenance {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long idMaintenance;
+
   @Column(nullable = false)
   private LocalDate dateDebut;
+
   private LocalDate dateFin;
+
   @Column(length = 255)
   private String description;
+
+  @ManyToOne
+  private Vehicule vehicule;
 }

@@ -12,11 +12,17 @@ public class Paiement {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long idPaiement;
+
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal montant;
+
   @Column(nullable = false)
   private LocalDate datePaiement;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private ModePaiement modePaiement;
+
+  @ManyToOne
+  private Contrat contrat;
 }
