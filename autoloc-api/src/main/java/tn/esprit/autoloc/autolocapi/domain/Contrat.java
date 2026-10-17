@@ -1,3 +1,4 @@
+
 package tn.esprit.autoloc.autolocapi.domain;
 
 import jakarta.persistence.*;
@@ -8,8 +9,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "contrat")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Contrat {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long idContrat;

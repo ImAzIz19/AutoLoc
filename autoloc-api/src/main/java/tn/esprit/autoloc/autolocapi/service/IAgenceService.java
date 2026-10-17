@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface IAgenceService {
   Agence saveAgence(Agence agence);
-  Optional<Agence> getAgenceById(Long id);
+  Agence getAgenceById(Long id);
   List<Agence> getAllAgences();
   void deleteAgence(Long id);
 }

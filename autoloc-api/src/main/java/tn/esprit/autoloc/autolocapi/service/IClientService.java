@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface IClientService {
   Client saveClient(Client client);
-  Optional<Client> getClientById(Long id);
+  Client getClientById(Long id);
   List<Client> getAllClients();
   void deleteClient(Long id);
 }
