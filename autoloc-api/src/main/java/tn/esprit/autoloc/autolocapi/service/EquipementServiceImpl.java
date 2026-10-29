@@ -17,10 +17,20 @@ public class EquipementServiceImpl implements IEquipementService {
 
   @Override
   public Equipement saveEquipement(Equipement equipement) {
-    if (equipement.getLibelle() == null || equipement.getLibelle().isEmpty()) {
+    if (equipement.getLibelle() == null || equipement.getLibelle().isBlank()) {
       throw new IllegalArgumentException("Le libellé de l'équipement est obligatoire.");
     }
     return equipementRepository.save(equipement);
+  }
+
+  @Override
+  public Equipement updateEquipement(Long id, Equipement equipement) {
+    Equipement existing = getEquipementById(id);
+    if (equipement.getLibelle() == null || equipement.getLibelle().isBlank()) {
+      throw new IllegalArgumentException("Le libellé de l'équipement est obligatoire.");
+    }
+    existing.setLibelle(equipement.getLibelle());
+    return equipementRepository.save(existing);
   }
 
   @Override

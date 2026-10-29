@@ -18,11 +18,28 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
 
   @Override
   public Maintenance saveMaintenance(Maintenance maintenance) {
-    if (maintenance.getDateFin() != null && maintenance.getDateDebut() != null
-      && maintenance.getDateFin().isBefore(maintenance.getDateDebut())) {
+    validate(maintenance);
+    return maintenanceRepository.save(maintenance);
+  }
+
+  @Override
+  public Maintenance updateMaintenance(Long id, Maintenance maintenance) {
+    Maintenance existing = getMaintenanceById(id);
+    validate(maintenance);
+    existing.setDateDebut(maintenance.getDateDebut());
+    existing.setDateFin(maintenance.getDateFin());
+    existing.setDescription(maintenance.getDescription());
+    existing.setVehicule(maintenance.getVehicule());
+    return maintenanceRepository.save(existing);
+  }
+
+  private void validate(Maintenance maintenance) {
+    if (maintenance.getDateDebut() == null) {
+      throw new IllegalArgumentException("La date de début est obligatoire.");
+    }
+    if (maintenance.getDateFin() != null && maintenance.getDateFin().isBefore(maintenance.getDateDebut())) {
       throw new IllegalArgumentException("La date de fin ne peut pas être antérieure à la date de début.");
     }
-    return maintenanceRepository.save(maintenance);
   }
 
   @Override

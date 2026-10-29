@@ -17,11 +17,29 @@ public class ReservationServiceImpl implements IReservationService {
 
   @Override
   public Reservation saveReservation(Reservation reservation) {
-    if (reservation.getDateFin() != null && reservation.getDateDebut() != null
-      && reservation.getDateFin().isBefore(reservation.getDateDebut())) {
+    validate(reservation);
+    return reservationRepository.save(reservation);
+  }
+
+  @Override
+  public Reservation updateReservation(Long id, Reservation reservation) {
+    Reservation existing = getReservationById(id);
+    validate(reservation);
+    existing.setDateDebut(reservation.getDateDebut());
+    existing.setDateFin(reservation.getDateFin());
+    existing.setStatut(reservation.getStatut());
+    existing.setVehicule(reservation.getVehicule());
+    existing.setClient(reservation.getClient());
+    return reservationRepository.save(existing);
+  }
+
+  private void validate(Reservation reservation) {
+    if (reservation.getDateDebut() == null || reservation.getDateFin() == null) {
+      throw new IllegalArgumentException("Les dates de début et de fin sont obligatoires.");
+    }
+    if (reservation.getDateFin().isBefore(reservation.getDateDebut())) {
       throw new IllegalArgumentException("La date de fin de la réservation ne peut pas être antérieure à la date de début.");
     }
-    return reservationRepository.save(reservation);
   }
 
   @Override

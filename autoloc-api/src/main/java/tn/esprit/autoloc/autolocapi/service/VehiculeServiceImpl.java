@@ -1,27 +1,55 @@
 package tn.esprit.autoloc.autolocapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.autolocapi.domain.Vehicule;
+import tn.esprit.autoloc.autolocapi.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.autolocapi.repository.IVehiculeRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VehiculeServiceImpl implements IVehiculeService {
 
-  @Autowired
-  private IVehiculeRepository vehiculeRepository;
+  private final IVehiculeRepository vehiculeRepository;
 
   @Override
   public Vehicule saveVehicule(Vehicule vehicule) {
+    validate(vehicule);
     return vehiculeRepository.save(vehicule);
   }
 
   @Override
-  public Optional<Vehicule> getVehiculeById(Long id) {
-    return vehiculeRepository.findById(id);
+  public Vehicule updateVehicule(Long id, Vehicule vehicule) {
+    Vehicule existing = getVehiculeById(id);
+    validate(vehicule);
+    existing.setImmatriculation(vehicule.getImmatriculation());
+    existing.setMarque(vehicule.getMarque());
+    existing.setModele(vehicule.getModele());
+    existing.setCategorie(vehicule.getCategorie());
+    existing.setTarifJournalier(vehicule.getTarifJournalier());
+    existing.setStatut(vehicule.getStatut());
+    existing.setAgence(vehicule.getAgence());
+    existing.setEquipements(vehicule.getEquipements());
+    return vehiculeRepository.save(existing);
+  }
+
+  @Override
+  public Vehicule getVehiculeById(Long id) {
+    return vehiculeRepository.findById(id)
+      .orElseThrow(() -> new ResourceNotFoundException("Vehicule", id));
+  }
+
+  private void validate(Vehicule vehicule) {
+    if (vehicule.getTarifJournalier() != null && vehicule.getTarifJournalier().signum() < 0) {
+      throw new IllegalArgumentException("Le tarif journalier ne peut pas être négatif.");
+    }
+    if (vehicule.getImmatriculation() == null || vehicule.getImmatriculation().isBlank()
+      || vehicule.getMarque() == null || vehicule.getMarque().isBlank()
+      || vehicule.getModele() == null || vehicule.getModele().isBlank()) {
+      throw new IllegalArgumentException("L'immatriculation, la marque et le modèle sont obligatoires.");
+    }
   }
 
   @Override
@@ -31,6 +59,6 @@ public class VehiculeServiceImpl implements IVehiculeService {
 
   @Override
   public void deleteVehicule(Long id) {
-    vehiculeRepository.deleteById(id);
+    vehiculeRepository.delete(getVehiculeById(id));
   }
 }

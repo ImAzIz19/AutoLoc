@@ -16,10 +16,31 @@ public class ClientServiceImpl implements IClientService {
 
   @Override
   public Client saveClient(Client client) {
-    if (client.getNom() == null || client.getEmail() == null) {
-      throw new IllegalArgumentException("Le nom et l'e-mail du client sont obligatoires.");
-    }
+    validate(client);
     return clientRepository.save(client);
+  }
+
+  @Override
+  public Client updateClient(Long id, Client client) {
+    Client existing = getClientById(id);
+    validate(client);
+    existing.setNom(client.getNom());
+    existing.setPrenom(client.getPrenom());
+    existing.setEmail(client.getEmail());
+    existing.setTelephone(client.getTelephone());
+    existing.setNumPermis(client.getNumPermis());
+    existing.setDateInscription(client.getDateInscription());
+    return clientRepository.save(existing);
+  }
+
+  private void validate(Client client) {
+    if (client.getNom() == null || client.getNom().isBlank()
+      || client.getPrenom() == null || client.getPrenom().isBlank()
+      || client.getEmail() == null || client.getEmail().isBlank()
+      || client.getTelephone() == null || client.getTelephone().isBlank()
+      || client.getNumPermis() == null || client.getNumPermis().isBlank()) {
+      throw new IllegalArgumentException("Les informations d'identification du client sont obligatoires.");
+    }
   }
 
   @Override

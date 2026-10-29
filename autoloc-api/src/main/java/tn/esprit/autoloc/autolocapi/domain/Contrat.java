@@ -2,10 +2,12 @@
 package tn.esprit.autoloc.autolocapi.domain;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "contrat")
@@ -31,6 +33,7 @@ public class Contrat {
   @OneToOne
   private Reservation reservation;
 
-  @OneToMany(mappedBy = "contrat")
-  private List<Paiement> paiements;
+  @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference("contrat-paiements")
+  private List<Paiement> paiements = new ArrayList<>();
 }

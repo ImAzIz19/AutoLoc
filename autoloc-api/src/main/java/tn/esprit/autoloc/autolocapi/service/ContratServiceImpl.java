@@ -21,6 +21,9 @@ public class ContratServiceImpl implements IContratService {
         "Un nouveau contrat ne doit pas avoir d'identifiant"
       );
     }
+    if (contrat.getDateSignature() == null || contrat.getMontantTotal() == null) {
+      throw new IllegalArgumentException("La date de signature et le montant total sont obligatoires.");
+    }
     return contratRepository.save(contrat);
   }
 

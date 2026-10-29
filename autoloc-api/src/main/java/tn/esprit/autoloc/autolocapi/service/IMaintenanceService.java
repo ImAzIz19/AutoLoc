@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface IMaintenanceService {
   Maintenance saveMaintenance(Maintenance maintenance);
+  Maintenance updateMaintenance(Long id, Maintenance maintenance);
   Maintenance getMaintenanceById(Long id);
   List<Maintenance> getAllMaintenances();
   void deleteMaintenance(Long id);

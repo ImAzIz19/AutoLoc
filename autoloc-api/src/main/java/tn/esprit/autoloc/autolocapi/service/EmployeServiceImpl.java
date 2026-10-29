@@ -16,10 +16,27 @@ public class EmployeServiceImpl implements IEmployeService {
 
   @Override
   public Employe saveEmploye(Employe employe) {
-    if (employe.getNom() == null || employe.getPrenom() == null) {
+    if (employe.getNom() == null || employe.getNom().isBlank()
+      || employe.getPrenom() == null || employe.getPrenom().isBlank()
+      || employe.getRole() == null) {
       throw new IllegalArgumentException("Le nom et le prénom de l'employé sont obligatoires.");
     }
     return employeRepository.save(employe);
+  }
+
+  @Override
+  public Employe updateEmploye(Long id, Employe employe) {
+    Employe existing = getEmployeById(id);
+    if (employe.getNom() == null || employe.getNom().isBlank()
+      || employe.getPrenom() == null || employe.getPrenom().isBlank()
+      || employe.getRole() == null) {
+      throw new IllegalArgumentException("Le nom, le prénom et le rôle de l'employé sont obligatoires.");
+    }
+    existing.setNom(employe.getNom());
+    existing.setPrenom(employe.getPrenom());
+    existing.setRole(employe.getRole());
+    existing.setAgence(employe.getAgence());
+    return employeRepository.save(existing);
   }
 
   @Override
