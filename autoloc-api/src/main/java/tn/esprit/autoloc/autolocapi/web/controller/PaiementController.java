@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tn.esprit.autoloc.autolocapi.domain.Paiement;
 import tn.esprit.autoloc.autolocapi.service.IPaiementService;
+import tn.esprit.autoloc.autolocapi.web.dto.PaiementDto;
+import tn.esprit.autoloc.autolocapi.web.mapper.PaiementMapper;
 
 @RestController @RequestMapping("/paiements") @RequiredArgsConstructor
 @Tag(name = "Paiements", description = "Consultation des paiements liés aux contrats")
 public class PaiementController {
   private final IPaiementService paiementService;
+  private final PaiementMapper paiementMapper;
   @GetMapping @Operation(summary = "Lister les paiements") @ApiResponse(responseCode = "200", description = "Liste des paiements")
-  public List<Paiement> findAll() { return paiementService.getAllPaiements(); }
+  public List<PaiementDto> findAll() { return paiementService.getAllPaiements().stream().map(paiementMapper::toDto).toList(); }
   @GetMapping("/{id}") @Operation(summary = "Consulter un paiement") @ApiResponses({@ApiResponse(responseCode = "200", description = "Paiement trouvé"), @ApiResponse(responseCode = "404", description = "Paiement introuvable")})
-  public Paiement findById(@PathVariable Long id) { return paiementService.getPaiementById(id); }
+  public PaiementDto findById(@PathVariable Long id) { return paiementMapper.toDto(paiementService.getPaiementById(id)); }
 }
