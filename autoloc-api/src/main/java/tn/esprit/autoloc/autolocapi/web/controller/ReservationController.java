@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.autolocapi.service.IReservationService;
 import tn.esprit.autoloc.autolocapi.web.dto.ReservationDto;
 import tn.esprit.autoloc.autolocapi.web.mapper.ReservationMapper;
+import tn.esprit.autoloc.autolocapi.web.dto.ReservationResponseDTO;
+import tn.esprit.autoloc.autolocapi.web.dto.ReservationWithContratRequestDTO;
 
 @RestController @RequestMapping("/reservations") @RequiredArgsConstructor
 @Tag(name = "Réservations", description = "Gestion des réservations")
@@ -28,4 +30,17 @@ public class ReservationController {
   public ReservationDto update(@PathVariable Long id, @Valid @RequestBody ReservationDto dto) { return reservationMapper.toDto(reservationService.updateReservation(id, reservationMapper.toEntity(dto))); }
   @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) @Operation(summary = "Supprimer une réservation") @ApiResponses({@ApiResponse(responseCode = "204", description = "Réservation supprimée"), @ApiResponse(responseCode = "404", description = "Réservation introuvable")})
   public void delete(@PathVariable Long id) { reservationService.deleteReservation(id); }
+  @PutMapping("/{id}/client")
+  public ReservationResponseDTO affecterAClient(
+    @PathVariable Long id,
+    @RequestParam String nom,
+    @RequestParam String prenom
+  ) {
+    return reservationService.affecterReservationAClient(id, nom, prenom);
+  }
+  @PostMapping("/with-contract")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ReservationResponseDTO creerAvecContrat(@Valid @RequestBody ReservationWithContratRequestDTO requestDTO) {
+    return reservationService.creerReservationEtContratAssocie(requestDTO);
+  }
 }

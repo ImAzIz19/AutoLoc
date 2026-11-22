@@ -8,18 +8,18 @@ import org.mapstruct.ReportingPolicy;
 import tn.esprit.autoloc.autolocapi.domain.Agence;
 import tn.esprit.autoloc.autolocapi.domain.Equipement;
 import tn.esprit.autoloc.autolocapi.domain.Vehicule;
-import tn.esprit.autoloc.autolocapi.web.dto.VehiculeDto;
+import tn.esprit.autoloc.autolocapi.web.dto.VehiculeDTO;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VehiculeMapper {
   @Mapping(target = "agenceId", source = "agence.idAgence")
   @Mapping(target = "equipementIds", source = "equipements")
-  VehiculeDto toDto(Vehicule vehicule);
+  VehiculeDTO toDto(Vehicule vehicule);
 
   @Mapping(target = "idVehicule", ignore = true)
   @Mapping(target = "agence", expression = "java(toAgence(dto.agenceId()))")
   @Mapping(target = "equipements", source = "equipementIds")
-  Vehicule toEntity(VehiculeDto dto);
+  Vehicule toEntity(VehiculeDTO dto);
 
   default Agence toAgence(Long id) {
     if (id == null) return null;

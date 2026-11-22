@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public record ContratDto(
+public record ContratDTO(
   Long idContrat,
   @NotNull(message = "La date de signature est obligatoire.") LocalDate dateSignature,
   @NotNull(message = "Le montant total du contrat est obligatoire.")

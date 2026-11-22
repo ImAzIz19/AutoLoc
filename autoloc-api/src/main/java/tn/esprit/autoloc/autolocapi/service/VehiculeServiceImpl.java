@@ -5,7 +5,14 @@ import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.autolocapi.domain.Vehicule;
 import tn.esprit.autoloc.autolocapi.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.autolocapi.repository.IVehiculeRepository;
+import tn.esprit.autoloc.autolocapi.repository.IEquipementRepository;
+import tn.esprit.autoloc.autolocapi.repository.IMaintenanceRepository;
+import tn.esprit.autoloc.autolocapi.domain.Equipement;
+import tn.esprit.autoloc.autolocapi.domain.Maintenance;
+import tn.esprit.autoloc.autolocapi.web.dto.VehiculeDTO;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,6 +20,53 @@ import java.util.List;
 public class VehiculeServiceImpl implements IVehiculeService {
 
   private final IVehiculeRepository vehiculeRepository;
+  private final IEquipementRepository equipementRepository;
+  private final IMaintenanceRepository maintenanceRepository;
+
+  @Override
+  public VehiculeDTO affecterVehiculeAEquipement(Long idVehicule, Long idEquipement) {
+    Vehicule vehicule = getVehiculeById(idVehicule);
+    Equipement equipement = equipementRepository.findById(idEquipement)
+      .orElseThrow(() -> new ResourceNotFoundException("Equipement", idEquipement));
+    if (vehicule.getEquipements() == null) vehicule.setEquipements(new ArrayList<>());
+    if (!vehicule.getEquipements().contains(equipement)
+      && vehicule.getEquipements().stream().noneMatch(e -> e.getIdEquipement().equals(idEquipement))) {
+      vehicule.getEquipements().add(equipement);
+    }
+    return toDTO(vehiculeRepository.save(vehicule));
+  }
+
+  @Override
+  public VehiculeDTO affecterMaintenanceAvehicule(String description, String immatriculation) {
+    if (description == null || description.isBlank()) throw new IllegalArgumentException("La description de maintenance est obligatoire.");
+    Vehicule vehicule = vehiculeRepository.findByImmatriculation(immatriculation)
+      .orElseThrow(() -> new ResourceNotFoundException("Vehicule"));
+
+    Maintenance maintenance = new Maintenance();
+    maintenance.setDescription(description);
+    maintenance.setDateDebut(LocalDate.now());
+    maintenance.setVehicule(vehicule);
+    maintenanceRepository.save(maintenance);
+
+    vehicule.setStatut(tn.esprit.autoloc.autolocapi.domain.StatutVehicule.MAINTENANCE);
+    return toDTO(vehiculeRepository.save(vehicule));
+  }
+
+  private VehiculeDTO toDTO(Vehicule vehicule) {
+    List<Long> equipementIds = vehicule.getEquipements() == null ? List.of()
+      : vehicule.getEquipements().stream().map(Equipement::getIdEquipement).toList();
+    return new VehiculeDTO(
+      vehicule.getIdVehicule(),
+      vehicule.getImmatriculation(),
+      vehicule.getMarque(),
+      vehicule.getModele(),
+      vehicule.getCategorie(),
+      vehicule.getTarifJournalier(),
+      vehicule.getStatut(),
+      vehicule.getAgence() != null ? vehicule.getAgence().getIdAgence() : null,
+      equipementIds
+    );
+  }
 
   @Override
   public Vehicule saveVehicule(Vehicule vehicule) {

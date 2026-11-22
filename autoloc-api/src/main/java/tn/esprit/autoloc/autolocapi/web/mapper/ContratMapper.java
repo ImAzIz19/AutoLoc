@@ -9,15 +9,15 @@ import org.mapstruct.ReportingPolicy;
 import tn.esprit.autoloc.autolocapi.domain.Contrat;
 import tn.esprit.autoloc.autolocapi.domain.Paiement;
 import tn.esprit.autoloc.autolocapi.domain.Reservation;
-import tn.esprit.autoloc.autolocapi.web.dto.ContratDto;
+import tn.esprit.autoloc.autolocapi.web.dto.ContratDTO;
 
 @Mapper(componentModel = "spring", uses = PaiementMapper.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContratMapper {
   @Mapping(target = "reservationId", source = "reservation.idReservation")
-  ContratDto toDto(Contrat contrat);
+  ContratDTO toDto(Contrat contrat);
 
   @Mapping(target = "reservation", expression = "java(toReservation(dto.reservationId()))")
-  Contrat toEntity(ContratDto dto);
+  Contrat toEntity(ContratDTO dto);
 
   default Reservation toReservation(Long id) {
     if (id == null) return null;

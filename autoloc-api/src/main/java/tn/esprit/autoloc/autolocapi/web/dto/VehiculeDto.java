@@ -8,7 +8,7 @@ import java.util.List;
 import tn.esprit.autoloc.autolocapi.domain.CategorieVehicule;
 import tn.esprit.autoloc.autolocapi.domain.StatutVehicule;
 
-public record VehiculeDto(
+public record VehiculeDTO(
   Long idVehicule,
   @NotBlank(message = "L'immatriculation du véhicule est obligatoire.") String immatriculation,
   @NotBlank(message = "La marque du véhicule est obligatoire.") String marque,
