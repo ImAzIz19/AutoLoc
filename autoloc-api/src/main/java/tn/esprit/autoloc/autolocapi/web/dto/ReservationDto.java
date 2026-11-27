@@ -10,5 +10,5 @@ public record ReservationDto(
   @NotNull(message = "La date de fin de réservation est obligatoire.") LocalDate dateFin,
   @NotNull(message = "Le statut de réservation est obligatoire.") StatutReservation statut,
   @NotNull(message = "L'identifiant du véhicule est obligatoire.") Long vehiculeId,
-  @NotNull(message = "L'identifiant du client est obligatoire.") Long clientId
+  Long clientId
 ) {}
